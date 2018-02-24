@@ -2,6 +2,7 @@ import 'react-sortable-tree/style.css';
 import React, {Component} from 'react';
 import SortableTree, {changeNodeAtPath, addNodeUnderParent, removeNodeAtPath} from 'react-sortable-tree';
 
+const getNodeKey = ({treeIndex}) => treeIndex;
 
 export default class App extends Component {
   constructor(props) {
@@ -19,93 +20,62 @@ export default class App extends Component {
     };
   }
 
+  removeNode = (path, getNodeKey) => {
+    this.setState(state => ({
+      treeData: removeNodeAtPath({
+        treeData: state.treeData,
+        path,
+        getNodeKey,
+      }),
+    }))
+  };
+
   render() {
-    const getNodeKey = ({treeIndex}) => treeIndex;
     return (
       <div>
         <div style={{height: 300}}>
           <SortableTree
             treeData={this.state.treeData}
             onChange={treeData => this.setState({treeData})}
-            generateNodeProps={({node, path}) => ({
-              title: ([
-                  <input
-                    style={{fontSize: '1.1rem'}}
-                    value={node.name}
-                    onChange={event => {
-                      const name = event.target.value;
-
-                      this.setState(state => ({
-                        treeData: changeNodeAtPath({
-                          treeData: state.treeData,
-                          path,
-                          getNodeKey,
-                          newNode: {...node, name},
-                        }),
-                      }));
-                    }}
-                  />, <br/>, <input
-                    style={{fontSize: '1.1rem'}}
-                    value={node.name}
-                    onChange={event => {
-                      const name = event.target.value;
-
-                      this.setState(state => ({
-                        treeData: changeNodeAtPath({
-                          treeData: state.treeData,
-                          path,
-                          getNodeKey,
-                          newNode: {...node, name},
-                        }),
-                      }));
-                    }}
-                  />]
-              ),
-              buttons: [
-                <button
-                  onClick={() =>
-                    this.setState(state => ({
-                      treeData: addNodeUnderParent({
-                        treeData: state.treeData,
-                        parentKey: path[path.length - 1],
-                        expandParent: true,
-                        getNodeKey,
-                        newNode: {
-                          title: `New One`,
-                        },
-                      }).treeData,
-                    }))
-                  }>
-                  Add Child
-                </button>,
-                <button
-                  onClick={() =>
-                    this.setState(state => ({
-                      treeData: removeNodeAtPath({
-                        treeData: state.treeData,
-                        path,
-                        getNodeKey,
-                      }),
-                    }))
-                  }>
-                  Remove
-                </button>,
-              ]
-            })}
-          />
+            />
         </div>
         <button
           onClick={() =>
             this.setState(state => ({
               treeData: state.treeData.concat({
-                title: `New one`,
+                title: <input
+                  style={{ fontSize: '1.1rem' }}
+                  value="Param Name"
+                  readOnly="readOnly"
+                />,
               }),
             }))
           }
         >
-          Add more
+          Add more single string param
+        </button>
+        <button
+          onClick={() =>
+            this.setState(state => ({
+              treeData: state.treeData.concat({
+                title: [<input
+                  style={{ fontSize: '1.1rem' }}
+                  value="Param Name"
+                  readOnly="readOnly"
+                />,<br/>,
+                  <input
+                    style={{ fontSize: '1.1rem' }}
+                    value="Param Value"
+                    readOnly="readOnly"
+                  />]
+              }),
+            }))
+          }
+        >
+          Add more param with string value
         </button>
       </div>
-    );
+  )
+    ;
   }
 }
