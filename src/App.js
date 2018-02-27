@@ -9,14 +9,7 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      treeData: [
-        {name: 'IT Manager'},
-        {
-          name: 'Regional Manager',
-          expanded: true,
-          children: [{name: 'Branch Manager'}],
-        },
-      ],
+      treeData: [],
     };
   }
 
@@ -30,6 +23,56 @@ export default class App extends Component {
     }))
   };
 
+
+  addSingleValueParam = () => {
+    this.setState(state => ({
+      treeData: state.treeData.concat({
+        title: <input
+          style={{fontSize: '1.1rem'}}
+          placeholder="Param Name"
+          readOnly="readOnly"
+        />,
+      }),
+    }))
+  }
+
+  addDoubleValueParam = () => {
+    this.setState(state => ({
+      treeData: state.treeData.concat({
+        title: [<input
+          style={{fontSize: '1.1rem'}}
+          placeholder="Param Name"
+          readOnly="readOnly"
+        />, <br/>,
+          <input
+            style={{fontSize: '1.1rem'}}
+            value="Param Value"
+            disabled="disabled"
+          />]
+      }),
+    }))
+  };
+  genButtons = ({node, path}) => ({
+    buttons: [
+      <button
+        onClick={() =>
+          this.setState(state => ({
+            treeData: removeNodeAtPath({
+              treeData: state.treeData,
+              path,
+              getNodeKey,
+            }),
+          }))
+        }
+      >
+        Remove
+      </button>,
+    ]
+  });
+  checkAndPublish = () => {
+
+  }
+
   render() {
     return (
       <div>
@@ -37,45 +80,22 @@ export default class App extends Component {
           <SortableTree
             treeData={this.state.treeData}
             onChange={treeData => this.setState({treeData})}
-            />
+            generateNodeProps={this.genButtons}
+          />
         </div>
         <button
-          onClick={() =>
-            this.setState(state => ({
-              treeData: state.treeData.concat({
-                title: <input
-                  style={{ fontSize: '1.1rem' }}
-                  value="Param Name"
-                  readOnly="readOnly"
-                />,
-              }),
-            }))
-          }
+          onClick={this.addSingleValueParam}
         >
           Add more single string param
         </button>
         <button
-          onClick={() =>
-            this.setState(state => ({
-              treeData: state.treeData.concat({
-                title: [<input
-                  style={{ fontSize: '1.1rem' }}
-                  value="Param Name"
-                  readOnly="readOnly"
-                />,<br/>,
-                  <input
-                    style={{ fontSize: '1.1rem' }}
-                    value="Param Value"
-                    readOnly="readOnly"
-                  />]
-              }),
-            }))
-          }
+          onClick={this.addDoubleValueParam}
         >
           Add more param with string value
         </button>
+        <button onClick={this.checkAndPublish}>Publish</button>
       </div>
-  )
-    ;
+    )
+      ;
   }
 }
