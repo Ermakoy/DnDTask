@@ -34,7 +34,7 @@ export default class App extends Component {
         />,
       }),
     }))
-  }
+  };
 
   addDoubleValueParam = () => {
     this.setState(state => ({
@@ -52,6 +52,7 @@ export default class App extends Component {
       }),
     }))
   };
+
   genButtons = ({node, path}) => ({
     buttons: [
       <button
@@ -69,9 +70,12 @@ export default class App extends Component {
       </button>,
     ]
   });
-  checkAndPublish = () => {
 
-  }
+  checkAndPublish = () => {
+    if (this.state.treeData.length < 4){
+      alert(`You need ${4 - this.state.treeData.length} more first level params`);
+    }
+  };
 
   render() {
     return (
