@@ -1,58 +1,56 @@
 import 'react-sortable-tree/style.css';
 import React, {Component} from 'react';
-import SortableTree, {changeNodeAtPath, addNodeUnderParent, removeNodeAtPath} from 'react-sortable-tree';
+import SortableTree, {map, removeNodeAtPath} from 'react-sortable-tree';
 
 const getNodeKey = ({treeIndex}) => treeIndex;
 
 export default class App extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       treeData: [],
     };
   }
 
-  removeNode = (path, getNodeKey) => {
-    this.setState(state => ({
-      treeData: removeNodeAtPath({
-        treeData: state.treeData,
-        path,
-        getNodeKey,
-      }),
-    }))
-  };
-
-
+  /**
+   * Function, that adds a param with a name
+   */
   addSingleValueParam = () => {
     this.setState(state => ({
       treeData: state.treeData.concat({
-        title: <input
+        title: [<input
           style={{fontSize: '1.1rem'}}
           placeholder="Param Name"
-          readOnly="readOnly"
-        />,
+          readOnly
+        />],
       }),
     }))
   };
-
+  /**
+   * Function, that adds a param with a name and string param
+   */
   addDoubleValueParam = () => {
     this.setState(state => ({
       treeData: state.treeData.concat({
         title: [<input
           style={{fontSize: '1.1rem'}}
           placeholder="Param Name"
-          readOnly="readOnly"
+          readOnly={true}
         />, <br/>,
           <input
             style={{fontSize: '1.1rem'}}
-            value="Param Value"
-            disabled="disabled"
+            placeholder="Param Value"
+            readOnly={true}
           />]
       }),
     }))
   };
-
+  /**
+   * Arrow function for setting every node buttons
+   * @param node
+   * @param path
+   * @returns {{buttons: *[]}}
+   */
   genButtons = ({node, path}) => ({
     buttons: [
       <button
@@ -70,17 +68,36 @@ export default class App extends Component {
       </button>,
     ]
   });
-
+  /**
+   * Function checking for required number of first level params
+   * and renders new state of components
+   * or messaging that we don't have enough params
+   */
   checkAndPublish = () => {
-    if (this.state.treeData.length < 4){
+    if (this.state.treeData.length < 4) {
       alert(`You need ${4 - this.state.treeData.length} more first level params`);
+    } else {
+      let newTree = map({
+        treeData: this.state.treeData,
+        getNodeKey,
+        callback: ({node}) => {
+          return node.title ? {
+            ...node, title: node.title.map((item) => {
+              return {...item, props: {...item.props, readOnly: false}}
+            })
+          } : node;
+        },
+        ignoreCollapsed: false
+      });
+      this.setState({treeData: newTree});
+      alert('Now you can modify params');
     }
   };
 
   render() {
     return (
       <div>
-        <div style={{height: 300}}>
+        <div style={{height: 500}}>
           <SortableTree
             treeData={this.state.treeData}
             onChange={treeData => this.setState({treeData})}
