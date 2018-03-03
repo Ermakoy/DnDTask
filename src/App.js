@@ -26,6 +26,7 @@ export default class App extends Component {
       }),
     }))
   };
+
   /**
    * Function, that adds a param with a name and string param
    */
@@ -45,6 +46,7 @@ export default class App extends Component {
       }),
     }))
   };
+
   /**
    * Arrow function for setting every node buttons
    * @param node
@@ -68,6 +70,7 @@ export default class App extends Component {
       </button>,
     ]
   });
+
   /**
    * Function checking for required number of first level params
    * and renders new state of components
